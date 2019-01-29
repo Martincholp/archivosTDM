@@ -1,0 +1,67 @@
+#! /usr/bin/env gedit
+
+Declaracion de archivos TDM
+
+Los archivos de texto TDM son similares a los XML. Contienen entidades con informacion de cada entidad.
+
+
+Estructura
+----------
+
+!version=0.1
+texto de encabezado
+nodo raiz{   ' Esto es un comentario inline
+' Esto es una linea completa comentada
+texto raiz
+propiedad = valor
+propiedad2 = valor /{con literales escapados/} 
+nodo hijo{
+texto hijo
+propiedad hijo = valor
+}
+}
+
+Encabezado
+----------
+
+Es el area que se encuentra antes del primer nodo, es decir del nodo raiz. En este encabezado se pueden encontrar ciertas propiedades relativas al archivo TDM, y no es recomendable agregar informacion relacionada con el contenido especifico del archivo. Estas propiedades son utilizadas para definir el comportamiento del parser. La unica propiedad que esta definida actualmente es la version del archivo, correspondiente a la 0.1, y que todavia esta en etapa de desarrollo. Sin embargo en un futuro pueden agregarse mas propiedades. Las propiedades de este tipo son como las que encontramos en los nodos, solo que la linea que la contiene debe empezar con el caracter de cierre de exclamacion (!) como se muestra en la estructura previa. Este caracter debe ser el primero de la linea y no se puede escapar en este lugar, pero si se puede usar en otro lugar que no sea el comienzo de linea.
+El resto del texto en el encabezado que no este marcado como propiedad de archivo se considera texto de encabezado y puede utilizarse con el fin que se desee, por ejemplo para dar una descripcion del archivo.
+Cuando se encuentre una linea que contenga una llave de apertura, se considera esto como el nodo raiz y a partir de alli comienza la estructuracion de los datos. La llave de apertura no puede escaparse en el encabezado, esto significa que no se puede usar como cadena de texto. Cualquier otro literal no tiene efecto esta area del archivo, por lo que puede usarse como cualquier caracter.
+En resumen, una linea que empieza con ! es una propiedad de archivo y su sintaxis es !nombre = valor.
+Una linea que contenga una llave de apertura se toma como marca de fin de encabezado y define el nodo raiz y el contenido del archivo propiamente dicho.
+El encabezado del archivo no es obligatorio, y en caso de omitirse el parser tendra el comportamiento por defecto.
+
+
+Nodos
+-----
+
+La entidad mas importante son los nodos. Cada nodo puede contener texto, propiedades y otros nodos. Para abrir y cerrar definiciones de nodos se utilizan llaves. La llave de apertura debe estar a continuacion del nombre del nodo, luego en las lineas siguientes debe estar el cuerpo del nodo, y para cerrar, la llave de cierre debe estar sola en una linea (lo que se encuentre a continuacion sera ignorado por el parser).
+Pueden haber nombres de nodos repetidos, y su nombre puede contener literales escapados.
+El archivo siempre contiene un nodo raiz del que cuelga el contenido del archivo. El primer nodo que se encuentre se considera nodo raiz.
+
+
+Propiedades
+-----------
+
+Una linea que contiene un igual se la considera como propiedad del nodo que la contiene. La sintaxis de las propiedades es del tipo 'nombre=valor'. No se puede repetir el nombre de una propiedad en un nodo, pero si puede aparecer el mismo nombre en otro nodo. Se pueden usar literales escapados tanto en el nombre como en el valor de la propiedad. El valor de la propiedad debe ser de una sola linea.
+
+
+Texto
+-----
+
+El cuerpo del nodo puede contener texto que forma parte de su contenido, sin ser propiedad ni otro nodo. Este texto se llama 'texto del nodo' y puede contener cualquier cosa, siempre que se escapen los caracteres especiales. Ademas es la unica parte del archivo donde se respetan los saltos de linea.
+
+
+Comentarios
+-----------
+
+Los comentarios son añadidos con una comilla simple ('). Lo que este a la derecha de esta comilla y hasta el final de la linea se considerara comentario y el parser lo ignorara.
+
+
+Literales
+---------
+
+Los caracteres utilizados para definir las distintas entidades son las llaves de apertura y cierre, el signo igual, la comilla simple y la barra ( { } = ' / ). La barra sirve para escapar estos caracteres y poder utilizarlos como un caracter normal tanto en el nombre como en el contenido de las entidade nodo y propiedad. Para hacerlo se debe anteponer al caracter que se desea escapar ( /{ /} /= /' // ).
+Ademas son importantes los finales de linea ya que ellos separan los distintos elementos del archivo. Los finales de linea no pueden escaparse.
+Estos caracteres no tienen efecto en el encabezado, excepto la llave de apertura. (Ver la seccion 'Encabezado'). 
+
